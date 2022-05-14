@@ -17,10 +17,7 @@ feasible_routes = list()
 def searching_route(name: str,
                     index: int,
                     ticket_info,
-                    arrival: float,
-                    depth: int) -> None:
-    if depth == 0:
-        return
+                    arrival: float) -> None:
 
     if name == dest:
         _list = create_route.copy()
@@ -42,12 +39,10 @@ def searching_route(name: str,
             if args.bags > int(ticket_info['bags_allowed']):  # there is not enough number of allowed bags for the trip
                 continue
 
-            for ticket in directs[ticket_info["destination"]]:
-                create_route.append(ticket)
-                index, ticket_info, air_name, arrival = ticket[0], ticket[2], ticket[2]["destination"], ticket[2][
-                    "arrival"]
-                searching_route(air_name, index, ticket_info, arrival, (depth - 1))
-                create_route.pop()
+            create_route.append(next_airport)
+            index, ticket_info, air_name, arrival = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
+            searching_route(air_name, index, ticket_info, arrival)
+            create_route.pop()
     return
 
 
@@ -79,9 +74,12 @@ else:
     for ticket in directs[origin]:
         create_route.append(ticket)
         index, ticket_info, air_name, arrival = ticket[0], ticket[2], ticket[2]["destination"], ticket[2]["arrival"]
-        deep = 2            # no more than one transfer (the depth of the recursion is 2)
-        searching_route(air_name, index, ticket_info, arrival, deep)
+        searching_route(air_name, index, ticket_info, arrival)
         create_route.pop()
 # --------- all possible routes ---------
-for elem in feasible_routes:
-    print(elem)
+# for elem in feasible_routes[0]:
+#     print(elem)
+for route in feasible_routes:
+    print('-----------------------------')
+    for ticket in route:
+        print(ticket)
