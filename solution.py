@@ -8,8 +8,9 @@ from control_ticket import bags_check_ok, layover_time
 # ------------- Global variables -------------
 # a dictionary for mapping "origin" to list with all possible "destinations"
 directs: Dict[str, List] = dict()
-# set with the all feasible routes to sort them by price
+# list with the tickets to make a trip
 create_trip = list()
+# list with the all feasible routes
 feasible_routes = list()
 # --------------------------------------------
 
