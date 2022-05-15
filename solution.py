@@ -40,8 +40,8 @@ def searching_route(name: str,
                 continue
 
             create_route.append(next_airport)
-            index, ticket_info, air_name, arrival = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
-            searching_route(air_name, index, ticket_info, arrival)
+            index, ticket, air_name, layover_start = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
+            searching_route(air_name, index, ticket, layover_start)
             create_route.pop()
     return
 
