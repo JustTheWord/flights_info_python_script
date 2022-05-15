@@ -2,7 +2,7 @@ import csv
 import argparse
 from typing import *
 from sys import stdin
-from control_ticket import control_ticket, layover_time
+from control_ticket import bags_check_ok, layover_time
 # python -m solution data.csv BTW REJ --bags=1
 
 # ------------- Global variables -------------
@@ -20,8 +20,8 @@ def searching_route(name: str,
                     arrival: float) -> None:
 
     if name == dest:
-        _list = create_route.copy()
-        feasible_routes.append(_list)
+        if bags_check_ok(args.bags, int(ticket_info['bags_allowed'])):
+            feasible_routes.append(create_route.copy())
 
     elif name in {ticket[2]['origin'] for ticket in create_route}:  # senseless routes like a -> b -> a (repeated) -> d
         return
@@ -36,12 +36,13 @@ def searching_route(name: str,
             if layover_t > 6 or layover_t < 1:      # the layover time is less than an hour or more than six hours
                 continue
 
-            if args.bags > int(ticket_info['bags_allowed']):  # there is not enough number of allowed bags for the trip
+            if not bags_check_ok(args.bags,
+                                 int(next_airport[2]['bags_allowed'])):  # there is not enough number of allowed bags
                 continue
 
             create_route.append(next_airport)
-            index, ticket, air_name, layover_start = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
-            searching_route(air_name, index, ticket, layover_start)
+            index, ticket, air_name, layover_check = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
+            searching_route(air_name, index, ticket, layover_check)
             create_route.pop()
     return
 
@@ -50,7 +51,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('infile', nargs='?', type=argparse.FileType('r'), default='example/example3.csv')
 # parser.add_argument('origin', nargs=1, type=str, help='Origin airport of the trip')
 # parser.add_argument('dest', nargs=1, type=str, help='The final destination of the trip')
-parser.add_argument('--bags', type=int, default=0, help='Number of requested bags')
+parser.add_argument('--bags', type=int, default=1, help='Number of requested bags')
 parser.add_argument('--ret', action='store_true', help='Is it a return flight?')
 args = parser.parse_args()
 # ------- Arguments -------
