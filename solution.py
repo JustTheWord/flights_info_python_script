@@ -2,11 +2,8 @@ import csv
 import json
 import argparse
 from typing import *
-from sys import stdin
-from operator import itemgetter
 from make_json import make_json_like_list
 from control_ticket import bags_check_ok, layover_time
-# python -m solution data.csv BTW REJ --bags=1
 
 # ------------- Global variables -------------
 # a dictionary for mapping "origin" to list with all possible "destinations"
@@ -51,7 +48,7 @@ def searching_route(name: str,
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('infile', nargs='?', type=argparse.FileType('r'), default=stdin)
+parser.add_argument('infile', nargs='?', type=argparse.FileType('r'))
 parser.add_argument('origin', nargs=1, type=str, help='Origin airport of the trip')
 parser.add_argument('dest', nargs=1, type=str, help='The final destination of the trip')
 parser.add_argument('--bags', type=int, default=0, help='Number of requested bags')

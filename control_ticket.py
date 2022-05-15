@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def bags_check_ok(bags_need, ticket_bags) -> bool:
