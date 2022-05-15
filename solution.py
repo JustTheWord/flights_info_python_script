@@ -1,7 +1,10 @@
 import csv
+import json
 import argparse
 from typing import *
 from sys import stdin
+from operator import itemgetter
+from make_json import make_json_like_list
 from control_ticket import bags_check_ok, layover_time
 # python -m solution data.csv BTW REJ --bags=1
 
@@ -9,7 +12,7 @@ from control_ticket import bags_check_ok, layover_time
 # a dictionary for mapping "origin" to list with all possible "destinations"
 directs: Dict[str, List] = dict()
 # set with the all feasible routes to sort them by price
-create_route = list()
+create_trip = list()
 feasible_routes = list()
 # --------------------------------------------
 
@@ -21,9 +24,9 @@ def searching_route(name: str,
 
     if name == dest:
         if bags_check_ok(args.bags, int(ticket_info['bags_allowed'])):
-            feasible_routes.append(create_route.copy())
+            feasible_routes.append(create_trip.copy())
 
-    elif name in {ticket[2]['origin'] for ticket in create_route}:  # senseless routes like a -> b -> a (repeated) -> d
+    elif name in {ticket[2]['origin'] for ticket in create_trip}:  # senseless routes like a -> b -> a (repeated) -> d
         return
 
     else:
@@ -40,25 +43,23 @@ def searching_route(name: str,
                                  int(next_airport[2]['bags_allowed'])):  # there is not enough number of allowed bags
                 continue
 
-            create_route.append(next_airport)
+            create_trip.append(next_airport)
             index, ticket, air_name, layover_check = next_airport[0], next_airport[2], next_airport[2]["destination"], next_airport[2]["arrival"]
             searching_route(air_name, index, ticket, layover_check)
-            create_route.pop()
+            create_trip.pop()
     return
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('infile', nargs='?', type=argparse.FileType('r'), default='example/example3.csv')
-# parser.add_argument('origin', nargs=1, type=str, help='Origin airport of the trip')
-# parser.add_argument('dest', nargs=1, type=str, help='The final destination of the trip')
-parser.add_argument('--bags', type=int, default=1, help='Number of requested bags')
+parser.add_argument('infile', nargs='?', type=argparse.FileType('r'), default=stdin)
+parser.add_argument('origin', nargs=1, type=str, help='Origin airport of the trip')
+parser.add_argument('dest', nargs=1, type=str, help='The final destination of the trip')
+parser.add_argument('--bags', type=int, default=0, help='Number of requested bags')
 parser.add_argument('--ret', action='store_true', help='Is it a return flight?')
 args = parser.parse_args()
 # ------- Arguments -------
-# origin: str = args.origin[0]
-origin = 'WTN'
-# dest: str = args.dest[0]
-dest = 'ZRW'
+origin: str = args.origin[0]
+dest: str = args.dest[0]
 # --------------------- Reading from file ---------------------
 with args.infile as file:
     reader = csv.DictReader(file)
@@ -73,14 +74,13 @@ if origin not in directs:
     exit(0)
 else:
     for ticket in directs[origin]:
-        create_route.append(ticket)
+        create_trip.append(ticket)
         index, ticket_info, air_name, arrival = ticket[0], ticket[2], ticket[2]["destination"], ticket[2]["arrival"]
         searching_route(air_name, index, ticket_info, arrival)
-        create_route.pop()
+        create_trip.pop()
+
 # --------- all possible routes ---------
-# for elem in feasible_routes[0]:
-#     print(elem)
-for route in feasible_routes:
-    print('-----------------------------')
-    for ticket in route:
-        print(ticket)
+_list = make_json_like_list(feasible_routes, args.bags)
+# ------ sort trips by total price ------
+_list.sort(key=lambda x: x["total_price"])
+print(json.dumps(_list, indent=4))
