@@ -49,7 +49,7 @@ def searching_route(name: str,
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('infile', nargs='?', type=argparse.FileType('r'))
+parser.add_argument('file', nargs='?', type=argparse.FileType('r'), help='The data set which we work with')
 parser.add_argument('origin', nargs=1, type=str, help='Origin airport of the trip')
 parser.add_argument('dest', nargs=1, type=str, help='The final destination of the trip')
 parser.add_argument('--bags', type=int, default=0, help='Number of requested bags')
