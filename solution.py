@@ -59,7 +59,7 @@ args = parser.parse_args()
 origin: str = args.origin[0]
 dest: str = args.dest[0]
 # --------------------- Reading from file ---------------------
-with args.infile as file:
+with args.file as file:
     reader = csv.DictReader(file)
     for i, route in enumerate(reader):
         if route['origin'] in directs:
