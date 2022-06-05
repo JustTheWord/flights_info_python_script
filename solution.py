@@ -11,7 +11,7 @@ directs: Dict[str, List] = dict()
 # list with the tickets to make a trip
 create_trip = list()
 # list with the all feasible routes
-feasible_routes = list()
+feasible_routes: List[List[Tuple]] = list()
 # --------------------------------------------
 
 

@@ -1,20 +1,18 @@
-from typing import List, Dict
+from typing import List, Dict, Union, Any
 from datetime import datetime
 
 
-def travel_time(depart_time, arrival_time):
-    # the arrival date partitioned to the date and the precise time
-    date, _, time = depart_time.rpartition('T')
+def convert_str_to_date(date_time: str) -> datetime:
+    # the variable with date + time is being partitioned to the date and the precise time
+    date, _, time = date_time.rpartition('T')
     year, month, day = map(lambda s: int(s), date.split('-'))
     hours, minutes, seconds = map(lambda s: int(s), time.split(':'))
-    depart_time = datetime(year, month, day, hours, minutes, seconds)
-    # the departure date partitioned to the date and the precise time
-    date, _, time = arrival_time.rpartition('T')
-    year, month, day = map(lambda s: int(s), date.split('-'))
-    hours, minutes, seconds = map(lambda s: int(s), time.split(':'))
-    arrival_time = datetime(year, month, day, hours, minutes, seconds)
+    return datetime(year, month, day, hours, minutes, seconds)
+
+
+def travel_time(depart_time: str, arrival_time: str):
     # finding the total time of the layover in hours
-    return arrival_time - depart_time
+    return convert_str_to_date(arrival_time) - convert_str_to_date(depart_time)
 
 
 def make_json_like_list(all_trips: List,
@@ -23,10 +21,10 @@ def make_json_like_list(all_trips: List,
 
     # -- Go through the trips in the list of all possible trips --
     for trip in all_trips:
-        total = 0               # a variable for counting the whole price of a trip
-        bag_min = 1000          # a variable for number of allowed bags
-        all_tickets = list()    # a list for route (sequence of tickets)
-        one_trip = dict()       # a dictionary for a trip
+        total = 0.0                                             # a variable for counting the whole price of a trip
+        bag_min = 1000                                          # a variable for number of allowed bags
+        all_tickets = list()                                    # a list for route (sequence of tickets)
+        one_trip: Dict[str, Union[List[Any], int, str, float]] = dict()       # a dictionary for a trip
 
         # -- Go through the tickets in a trip --
         for ticket in trip:
