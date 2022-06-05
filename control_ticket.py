@@ -6,5 +6,5 @@ def bags_check_ok(bags_need, ticket_bags) -> bool:
 
 
 def layover_time(arrival, departure) -> float:
-    return (convert_str_to_date(departure)
-            - convert_str_to_date(arrival)).total_seconds() / 3600 if departure > arrival else 0.0
+    return (convert_str_to_date(departure) - convert_str_to_date(arrival))\
+               .total_seconds() / 3600 if departure > arrival else 0.0
